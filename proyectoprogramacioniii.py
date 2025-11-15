@@ -144,3 +144,84 @@ def crear_tablas():
 ## ejecutar la creacion de tablas
 crear_tablas()
 
+def insertar_datos_clnica(nombre, ubicacion_base, latitud, longitud):
+    query = """
+    INSERT INTO clinicas (nombre, ubicacion_base, latitud, longitud)
+    VALUES (?, ?, ?, ?);
+    """
+    cursor.execute(query, (nombre, ubicacion_base, latitud, longitud))
+    conn.commit()
+    return cursor.lastrowid
+def insertar_datos_usuario(username, nombre_completo, correo, rol):
+    query = """
+    INSERT INTO usuarios (username, nombre_completo, correo, rol)
+    VALUES (?, ?, ?, ?);
+    """
+    cursor.execute(query, (username, nombre_completo, correo, rol))
+    conn.commit()
+    return cursor.lastrowid
+def insertar_datos_equipo_medico(tipo, modelo, numero_serie, clinica_id, capacidad_litros):
+    query = """
+    INSERT INTO equipos_medicos (tipo, modelo, numero_serie, clinica_id, capacidad_litros)
+    VALUES (?, ?, ?, ?, ?);
+    """
+    cursor.execute(query, (tipo, modelo, numero_serie, clinica_id, capacidad_litros))
+    conn.commit()
+    return cursor.lastrowid
+def insertar_datos_vacuna(lote, tipo, cantidad, temperatura_minima, temperatura_maxima, fecha_vencimiento, clinica_id):
+    query = """
+    INSERT INTO vacunas (lote, tipo, cantidad, temperatura_minima, temperatura_maxima, fecha_vencimiento, clinica_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?);
+    """
+    cursor.execute(query, (lote, tipo, cantidad, temperatura_minima, temperatura_maxima, fecha_vencimiento, clinica_id))
+    conn.commit()
+    return cursor.lastrowid
+def insertar_datos_ruta(clinica_id, comunidad, fecha, distancia_km):    
+    query = """
+    INSERT INTO rutas (clinica_id, comunidad, fecha, distancia_km)
+    VALUES (?, ?, ?, ?);
+    """
+    cursor.execute(query, (clinica_id, comunidad, fecha, distancia_km))
+    conn.commit()
+    return cursor.lastrowid
+def insertar_datos_registro_temperatura(clinica_id, equipo_id, temperatura, latitud, longitud, fuente):
+    query = """
+    INSERT INTO registros_temperatura (clinica_id, equipo_id, temperatura, latitud, longitud, fuente)
+    VALUES (?, ?, ?, ?, ?, ?);
+    """
+    cursor.execute(query, (clinica_id, equipo_id, temperatura, latitud, longitud, fuente))
+    conn.commit()
+    return cursor.lastrowid
+def insertar_datos_aplicacion_vacuna(clinica_id, vacuna_id, lote, cantidad, comunidad, paciente_identificacion, responsable_id, evidencia_firma):
+    query = """
+    INSERT INTO aplicaciones_vacuna (clinica_id, vacuna_id, lote, cantidad, comunidad, paciente_identificacion, responsable_id, evidencia_firma)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+    """
+    cursor.execute(query, (clinica_id, vacuna_id, lote, cantidad, comunidad, paciente_identificacion, responsable_id, evidencia_firma))
+    conn.commit()
+    return cursor.lastrowid
+def insertar_datos_alerta(tipo, mensaje, clinica_id, equipo_id, vacuna_id, severidad, metadata):
+    query = """
+    INSERT INTO alertas (tipo, mensaje, clinica_id, equipo_id, vacuna_id, severidad, metadata)
+    VALUES (?, ?, ?, ?, ?, ?, ?);
+    """
+    cursor.execute(query, (tipo, mensaje, clinica_id, equipo_id, vacuna_id, severidad, metadata))
+    conn.commit()
+    return cursor.lastrowid 
+def insertar_datos_mantenimiento(equipo_id, tipo_mantenimiento, descripcion, fecha_programada, encargado_id):
+    query = """
+    INSERT INTO mantenimientos (equipo_id, tipo_mantenimiento, descripcion, fecha_programada, encargado_id)
+    VALUES (?, ?, ?, ?, ?);
+    """
+    cursor.execute(query, (equipo_id, tipo_mantenimiento, descripcion, fecha_programada, encargado_id))
+    conn.commit()
+    return cursor.lastrowid 
+def insertar_datos_auditoria(tabla_afectada, registro_id, accion, usuario_id, valores_anteriores, valores_nuevos):    
+    query = """
+    INSERT INTO auditoria (tabla_afectada, registro_id, accion, usuario_id, valores_anteriores, valores_nuevos)
+    VALUES (?, ?, ?, ?, ?, ?);
+    """
+    cursor.execute(query, (tabla_afectada, registro_id, accion, usuario_id, valores_anteriores, valores_nuevos))
+    conn.commit()
+    return cursor.lastrowid
+
