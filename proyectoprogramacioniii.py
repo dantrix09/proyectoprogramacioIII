@@ -1,5 +1,5 @@
 import sqlite3
-
+from datetime import datetime
 conn = sqlite3.connect('basededatosclinicas.db')
 cursor = conn.cursor()
 
@@ -261,7 +261,144 @@ def registrar_clinica():
     lon = longitud()
     clinica_id = insertar_datos_clnica(nombre, ubicacion, lat, lon)
     print(f"Clinica registrada con ID: {clinica_id}")   
-registrar_clinica()
+def usuario_username():
+    username = input("Ingrese el nombre de usuario: ")
+    if username.strip() == "":
+        print("El nombre de usuario no puede estar vacio. Intente de nuevo.")
+        return usuario_username()
+    return username 
+
+def usuario_nombre_completo():
+    nombre_completo = input("Ingrese el nombre completo del usuario: ")
+    if nombre_completo.strip() == "":
+        print("El nombre completo no puede estar vacio. Intente de nuevo.")
+        return usuario_nombre_completo()
+    return nombre_completo
+def usuario_correo():
+    correo = input("Ingrese el correo del usuario: ")
+    if correo.strip() == "":
+        print("El correo no puede estar vacio. Intente de nuevo.")
+        return usuario_correo()
+    return correo
+def usuario_rol():
+    rol = input("Ingrese el rol del usuario (admin, medico, tecnico): ")
+    if rol.strip() == "":
+        print("El rol no puede estar vacio. Intente de nuevo.")
+    elif rol not in ['admin', 'medico', 'tecnico']:
+        print("Rol invalido. Intente de nuevo.")
+    else:
+        return rol
+def registrar_usuario():    
+    username = usuario_username()
+    nombre_completo = usuario_nombre_completo()
+    correo = usuario_correo()
+    rol = usuario_rol()
+    usuario_id = insertar_datos_usuario(username, nombre_completo, correo, rol)
+    print(f"Usuario registrado con ID: {usuario_id}")
+    
+def tipo_equipo():
+    tipo = input("Ingrese el tipo de equipo medico: ")
+    if tipo.strip() == "":
+        print("El tipo de equipo no puede estar vacio. Intente de nuevo.")
+        return tipo_equipo()
+    return tipo 
+def modelo_equipo():
+    modelo = input("Ingrese el modelo del equipo medico: ")
+    if modelo.strip() == "":
+        print("El modelo no puede estar vacio. Intente de nuevo.")
+        return modelo_equipo()
+    return modelo
+def numero_serie_equipo():
+    numero_serie = input("Ingrese el numero de serie del equipo medico: ")
+    if numero_serie.strip() == "":
+        print("El numero de serie no puede estar vacio. Intente de nuevo.")
+        return numero_serie_equipo()
+    return numero_serie
+def capacidad_litros_equipo():
+    litros = float(input("Ingrese la capacidad en litros del equipo medico: ")) 
+    if litros <=0:
+        print("La capacidad en litros debe ser mayor que cero. Intente de nuevo.")
+        
+    else:
+        return litros
+def id_clinica():
+    while True:
+      try:
+        id_clinica = int(input('ingrese el ID de la clinica que quiera relacionar:'))
+        if id_clinica <= 0:
+          print("El ID debe ser un número positivo.") 
+        elif cursor.execute("SELECT * FROM CLINICAS WHERE ID = ?", (id_clinica,)).fetchone() is None:
+          print("No existe una clinica con ese ID. Por favor ingrese un ID válido.")
+        else:
+           return id_clinica
+      except ValueError:
+        print("Por favor ingrese un ID válido.")
+def registrar_equipo_medico():    
+    tipo = tipo_equipo()
+    modelo = modelo_equipo()
+    numero_serie = numero_serie_equipo()
+    clinica_id = id_clinica()
+    capacidad_litros = capacidad_litros_equipo()
+    equipo_id = insertar_datos_equipo_medico(tipo, modelo, numero_serie, clinica_id, capacidad_litros)
+    print(f"Equipo medico registrado con ID: {equipo_id}")
+def tipo_vacuna():
+    tipo = input("Ingrese el tipo de vacuna: ")
+    if tipo.strip() == "":
+        print("El tipo de vacuna no puede estar vacio. Intente de nuevo.")
+        return tipo_vacuna()
+    return tipo
+def lote_vacuna():
+    lote = input("Ingrese el lote de la vacuna: ")
+    if lote.strip() == "":
+        print("El lote no puede estar vacio. Intente de nuevo.")
+        return lote_vacuna()
+    return lote
+def cantidad_vacuna():
+    while True:
+      try:
+        cantidad = int(input('Ingrese la cantidad de vacunas:'))
+        if cantidad <= 0:
+          print("La cantidad debe ser un número positivo. Intente de nuevo.")
+        else:
+           return cantidad
+      except ValueError:
+        print("Por favor ingrese una cantidad válida.")
+def temperatura_minima_vacuna():
+    while True:
+      try:
+        temp_min = float(input('Ingrese la temperatura minima de almacenamiento de la vacuna:'))
+        return temp_min
+      except ValueError:
+        print("Por favor ingrese una temperatura válida.")  
+def temperatura_maxima_vacuna():
+    while True:
+      try:
+        temp_max = float(input('Ingrese la temperatura maxima de almacenamiento de la vacuna:'))
+        return temp_max
+      except ValueError:
+        print("Por favor ingrese una temperatura válida.")  
+def fecha_vencimiento_vacuna():
+    fecha_str = input("Ingrese la fecha de vencimiento de la vacuna (YYYY-MM-DD): ")
+    try:
+        fecha_vencimiento = datetime.strptime(fecha_str, "%Y-%m-%d").date()
+        return fecha_vencimiento
+    except ValueError:
+        print("Formato de fecha invalido. Intente de nuevo.")
+        return fecha_vencimiento_vacuna()
+
+def registrar_vacuna():   
+    lote = lote_vacuna()
+    tipo = tipo_vacuna()
+    cantidad = cantidad_vacuna()
+    temperatura_minima = temperatura_minima_vacuna()
+    temperatura_maxima = temperatura_maxima_vacuna()
+    fecha_vencimiento = fecha_vencimiento_vacuna()
+    clinica_id = id_clinica()
+    vacuna_id = insertar_datos_vacuna(lote, tipo, cantidad, temperatura_minima, temperatura_maxima, fecha_vencimiento, clinica_id)
+    print(f"Vacuna registrada con ID: {vacuna_id}")
+
+    
+
     
  
 
