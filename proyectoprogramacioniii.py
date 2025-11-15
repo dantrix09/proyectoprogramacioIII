@@ -225,3 +225,5 @@ def insertar_datos_auditoria(tabla_afectada, registro_id, accion, usuario_id, va
     conn.commit()
     return cursor.lastrowid
 
+#pvto daniel
+
