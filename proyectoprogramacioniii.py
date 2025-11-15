@@ -225,4 +225,43 @@ def insertar_datos_auditoria(tabla_afectada, registro_id, accion, usuario_id, va
     conn.commit()
     return cursor.lastrowid
 
+def nombre_clinica():
+    nombre = input("Ingrese el nombre de la clinica: ")
+    if nombre.strip() == "":
+        print("El nombre no puede estar vacio. Intente de nuevo.")
+        return nombre_clinica()
+    return nombre
+def ubicacion_base():
+    ubicacion = input("Ingrese la ubicacion base de la clinica: ")
+    if ubicacion.strip() == "":
+        print("La ubicacion no puede estar vacia. Intente de nuevo.")
+        return ubicacion_base()
+    return ubicacion
+def latitud():
+    try:
+        lat = float(input("Ingrese la latitud de la clinica: "))
+        return lat
+    except ValueError:
+        print("Latitud invalida. Intente de nuevo.")
+        return latitud()
+def longitud():  
+    try:
+        lon = float(input("Ingrese la longitud de la clinica: "))
+        if lon == 0:
+            print("La longitud no puede ser cero. Intente de nuevo.")
+            return longitud()   
+        return lon
+    except ValueError:
+        print("Longitud invalida. Intente de nuevo.")
+        return longitud()
+def registrar_clinica():    
+    nombre = nombre_clinica()
+    ubicacion = ubicacion_base()
+    lat = latitud()
+    lon = longitud()
+    clinica_id = insertar_datos_clnica(nombre, ubicacion, lat, lon)
+    print(f"Clinica registrada con ID: {clinica_id}")   
+registrar_clinica()
+    
+ 
 
