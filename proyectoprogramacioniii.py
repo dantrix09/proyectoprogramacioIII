@@ -397,6 +397,145 @@ def registrar_vacuna():
     vacuna_id = insertar_datos_vacuna(lote, tipo, cantidad, temperatura_minima, temperatura_maxima, fecha_vencimiento, clinica_id)
     print(f"Vacuna registrada con ID: {vacuna_id}")
 
+def rutas():
+    ruta = input("Ingrese la comunidad de la ruta: ")
+    if ruta.strip() == "":
+        print("La comunidad no puede estar vacia. Intente de nuevo.")
+        return rutas()
+    return ruta
+def fecha_ruta():
+    fecha_str = input("Ingrese la fecha de la ruta (YYYY-MM-DD): ")
+    try:
+        fecha_ruta = datetime.strptime(fecha_str, "%Y-%m-%d").date()
+        return fecha_ruta
+    except ValueError:
+        print("Formato de fecha invalido. Intente de nuevo.")
+        return fecha_ruta()
+def distancia_km_ruta():
+    while True:
+      try:
+        distancia = float(input('Ingrese la distancia en km de la ruta:'))
+        if distancia <= 0:
+          print("La distancia debe ser un número positivo. Intente de nuevo.")
+        else:
+           return distancia
+      except ValueError:
+        print("Por favor ingrese una distancia válida.")    
+def registrar_ruta():  
+    clinica_id = id_clinica()
+    comunidad = rutas()
+    fecha = fecha_ruta()
+    distancia_km = distancia_km_ruta()
+    ruta_id = insertar_datos_ruta(clinica_id, comunidad, fecha, distancia_km)
+    print(f"Ruta registrada con ID: {ruta_id}")
+def registros_temperatura():
+    while True:
+      try:
+        temperatura = float(input('Ingrese la temperatura registrada:'))
+        return temperatura
+      except ValueError:
+        print("Por favor ingrese una temperatura válida.")
+def latitud_registro():
+    try:
+        lat = float(input("Ingrese la latitud del registro de temperatura: "))
+        return lat
+    except ValueError:
+        print("Latitud invalida. Intente de nuevo.")
+        return latitud_registro()
+def longitud_registro():
+    try:
+        lon = float(input("Ingrese la longitud del registro de temperatura: "))
+        if lon == 0:
+            print("La longitud no puede ser cero. Intente de nuevo.")
+            return longitud_registro()   
+        return lon
+    except ValueError:
+        print("Longitud invalida. Intente de nuevo.")
+        return longitud_registro()
+def fuente_registro():
+    fuente = input("Ingrese la fuente del registro de temperatura: ")
+    if fuente.strip() == "":
+        print("La fuente no puede estar vacia. Intente de nuevo.")
+        return fuente_registro()
+    return fuente
+def registrar_registro_temperatura():  
+    clinica_id = id_clinica()
+    equipo_id = int(input("Ingrese el ID del equipo medico: "))
+    temperatura = registros_temperatura()
+    latitud = latitud_registro()
+    longitud = longitud_registro()
+    fuente = fuente_registro()
+    registro_id = insertar_datos_registro_temperatura(clinica_id, equipo_id, temperatura, latitud, longitud, fuente)
+    print(f"Registro de temperatura registrado con ID: {registro_id}")
+
+def aplicaciones_vacuna_lote():
+    lote = input("Ingrese el lote de la vacuna aplicada: ")
+    if lote.strip() == "":
+        print("El lote no puede estar vacio. Intente de nuevo.")
+        return aplicaciones_vacuna_lote()
+    return lote
+def aplicaciones_vacuna_cantidad():
+    while True:
+      try:
+        cantidad = int(input('Ingrese la cantidad de vacunas aplicadas:'))
+        if cantidad <= 0:
+          print("La cantidad debe ser un número positivo. Intente de nuevo.")
+        else:
+           return cantidad
+      except ValueError:
+        print("Por favor ingrese una cantidad válida.")
+def aplicaciones_vacuna_paciente_identificacion():
+    identificacion = input("Ingrese la identificacion del paciente: ")
+    if identificacion.strip() == "":
+        print("La identificacion no puede estar vacia. Intente de nuevo.")
+        return aplicaciones_vacuna_paciente_identificacion()
+    return identificacion
+def id_comunidad_responsable():
+    while True:
+      try:
+        id_responsable = int(input('Ingrese el ID del responsable de la aplicacion:'))
+        if id_responsable <= 0:
+          print("El ID debe ser un número positivo.") 
+        elif cursor.execute("SELECT * FROM USUARIOS WHERE ID = ?", (id_responsable,)).fetchone() is None:
+          print("No existe un usuario con ese ID. Por favor ingrese un ID válido.")
+        else:
+           return id_responsable
+      except ValueError:
+        print("Por favor ingrese un ID válido.")    
+def aplicaciones_vacuna_evidencia_firma():
+    evidencia = input("Ingrese la evidencia de firma (ruta del archivo o descripcion): ")
+    if evidencia.strip() == "":
+        print("La evidencia no puede estar vacia. Intente de nuevo.")
+        return aplicaciones_vacuna_evidencia_firma()
+    return evidencia
+def id_vacuna():
+    while True:
+      try:
+        id_vacuna = int(input('ingrese el ID de la vacuna aplicada:'))
+        if id_vacuna <= 0:
+          print("El ID debe ser un número positivo.") 
+        elif cursor.execute("SELECT * FROM VACUNAS WHERE ID = ?", (id_vacuna,)).fetchone() is None:
+          print("No existe una vacuna con ese ID. Por favor ingrese un ID válido.")
+        else:
+           return id_vacuna
+      except ValueError:
+        print("Por favor ingrese un ID válido.")    
+def registrar_aplicacion_vacuna():  
+    clinica_id = id_clinica()
+    vacuna_id = id_vacuna
+    lote = aplicaciones_vacuna_lote()
+    cantidad = aplicaciones_vacuna_cantidad()
+    comunidad = id_comunidad_responsable()
+    paciente_identificacion = aplicaciones_vacuna_paciente_identificacion()
+    responsable_id = id_comunidad_responsable()
+    evidencia_firma = aplicaciones_vacuna_evidencia_firma()
+    aplicacion_id = insertar_datos_aplicacion_vacuna(clinica_id, vacuna_id, lote, cantidad, comunidad, paciente_identificacion, responsable_id, evidencia_firma)
+    print(f"Aplicacion de vacuna registrada con ID: {aplicacion_id}")
+
+
+
+
+
     
 
     
