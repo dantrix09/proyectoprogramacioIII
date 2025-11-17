@@ -105,7 +105,6 @@ def crear_tablas():
         severidad TEXT DEFAULT 'media',
         leida INTEGER DEFAULT 0,
         fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
-        metadata TEXT,
         FOREIGN KEY (clinica_id) REFERENCES clinicas(id),
         FOREIGN KEY (equipo_id) REFERENCES equipos_medicos(id),
         FOREIGN KEY (vacuna_id) REFERENCES vacunas(id)
@@ -532,12 +531,129 @@ def registrar_aplicacion_vacuna():
     aplicacion_id = insertar_datos_aplicacion_vacuna(clinica_id, vacuna_id, lote, cantidad, comunidad, paciente_identificacion, responsable_id, evidencia_firma)
     print(f"Aplicacion de vacuna registrada con ID: {aplicacion_id}")
 
-
-
-
-
+def tipo_alerta():
+    tipo = input("Ingrese el tipo de alerta: ")
+    if tipo.strip() == "":
+        print("El tipo de alerta no puede estar vacio. Intente de nuevo.")
+        return tipo_alerta()
+    return tipo 
+def mensaje_alerta():
+    mensaje = input("Ingrese el mensaje de la alerta: ")
+    if mensaje.strip() == "":
+        print("El mensaje no puede estar vacio. Intente de nuevo.")
+        return mensaje_alerta()
+    return mensaje
+def severidad_alerta():
+    severidad = input("Ingrese la severidad de la alerta (baja, media, alta): ")
+    if severidad.strip() == "":
+        print("La severidad no puede estar vacia. Intente de nuevo.")
+    elif severidad not in ['baja', 'media', 'alta']:
+        print("Severidad invalida. Intente de nuevo.")
+    else:
+        return severidad    
+    ##leida tiene que ser 0 o 1
+def leida():
+    leida = input("Ingrese si la alerta ha sido leida (0 para no, 1 para si): ")
+    if leida.strip() == "":
+        print("El campo no puede estar vacio. Intente de nuevo.")
+    elif leida not in ['0', '1']:
+        print("Valor invalido. Intente de nuevo.")
+    else:
+        return int(leida)
+def fecha_creacion_alerta():
+    fecha_str = input("Ingrese la fecha de creacion de la alerta (YYYY-MM-DD HH:MM:SS): ")
+    try:
+        fecha_creacion = datetime.strptime(fecha_str, "%Y-%m-%d %H:%M:%S")
+        return fecha_creacion
+    except ValueError:
+        print("Formato de fecha invalido. Intente de nuevo.")
+        return fecha_creacion_alerta()
+def registrar_alerta():  
+    tipo = tipo_alerta()
+    mensaje = mensaje_alerta()
+    clinica_id = id_clinica()
+    equipo_id = int(input("Ingrese el ID del equipo medico relacionado (0 si no aplica): "))
+    vacuna_id = int(input("Ingrese el ID de la vacuna relacionada (0 si no aplica): "))
+    severidad = severidad_alerta()
+    alerta_id = insertar_datos_alerta(tipo, mensaje, clinica_id, equipo_id, vacuna_id, severidad)
+    print(f"Alerta registrada con ID: {alerta_id}")
+def tipo_mantenimiento():
+    tipo_mantenimiento = input("Ingrese el tipo de mantenimiento: ")
+    if tipo_mantenimiento.strip() == "":
+        print("El tipo de mantenimiento no puede estar vacio. Intente de nuevo.")
+        return tipo_mantenimiento()
+    return tipo_mantenimiento
+def descripcion_mantenimiento():
+    descripcion = input("Ingrese la descripcion del mantenimiento: ")
+    if descripcion.strip() == "":
+        print("La descripcion no puede estar vacia. Intente de nuevo.")
+        return descripcion_mantenimiento()
+    return descripcion
+def fecha_programada_mantenimiento():
+    fecha_str = input("Ingrese la fecha programada del mantenimiento (YYYY-MM-DD): ")
+    try:
+        fecha_programada = datetime.strptime(fecha_str, "%Y-%m-%d").date()
+        return fecha_programada
+    except ValueError:
+        print("Formato de fecha invalido. Intente de nuevo.")
+        return fecha_programada_mantenimiento()
+def id_encargado():
+    while True:
+      try:
+        id_encargado = int(input('ingrese el ID del encargado del mantenimiento:'))
+        if id_encargado <= 0:
+          print("El ID debe ser un número positivo.") 
+        elif cursor.execute("SELECT * FROM USUARIOS WHERE ID = ?", (id_encargado,)).fetchone() is None:
+          print("No existe un usuario con ese ID. Por favor ingrese un ID válido.")
+        else:
+           return id_encargado
+      except ValueError:
+        print("Por favor ingrese un ID válido.")    
+def registrar_mantenimiento():  
+    equipo_id = int(input("Ingrese el ID del equipo medico: "))
+    tipo_mantenimiento = tipo_mantenimiento()
+    descripcion = descripcion_mantenimiento()
+    fecha_programada = fecha_programada_mantenimiento()
+    encargado_id = id_encargado()
+    mantenimiento_id = insertar_datos_mantenimiento(equipo_id, tipo_mantenimiento, descripcion, fecha_programada, encargado_id)
+    print(f"Mantenimiento registrado con ID: {mantenimiento_id}")
+def tabla_afectada():
+    tabla_afectada = input("Ingrese la tabla afectada: ")
+    if tabla_afectada.strip() == "":
+        print("La tabla afectada no puede estar vacia. Intente de nuevo.")
+        return tabla_afectada()
+    return tabla_afectada
+def accion_auditoria():
+    accion = input("Ingrese la accion realizada (INSERT, UPDATE, DELETE): ")
+    if accion.strip() == "":
+        print("La accion no puede estar vacia. Intente de nuevo.")
+    elif accion not in ['INSERT', 'UPDATE', 'DELETE']:
+        print("Accion invalida. Intente de nuevo.")
+    else:
+        return accion
+def registrar_auditoria():  
+    tabla_afectada = tabla_afectada()
+    registro_id = int(input("Ingrese el ID del registro afectado: "))
+    accion = accion_auditoria()
+    usuario_id = int(input("Ingrese el ID del usuario que realizo la accion: "))
+    valores_anteriores = input("Ingrese los valores anteriores (formato JSON o texto): ")
+    valores_nuevos = input("Ingrese los valores nuevos (formato JSON o texto): ")
+    auditoria_id = insertar_datos_auditoria(tabla_afectada, registro_id, accion, usuario_id, valores_anteriores, valores_nuevos)
+    print(f"Auditoria registrada con ID: {auditoria_id}")   
+def menu():
+    print("Seleccione una opcion:")
+    print("1. Registrar Clinica")
+    print("2. Registrar Usuario")
+    print("3. Registrar Equipo Medico")
+    print("4. Registrar Vacuna")
+    print("5. Registrar Ruta")
+    print("6. Registrar Registro de Temperatura")
+    print("7. Registrar Aplicacion de Vacuna")
+    print("8. Registrar Alerta")
+    print("9. Registrar Mantenimiento")
+    print("10. Registrar Auditoria")
+    print("11. Salir")
     
 
     
  
-
