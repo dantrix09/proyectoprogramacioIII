@@ -712,7 +712,7 @@ def menu():
         except ValueError:
             print("Entrada invalida. Intente de nuevo.")            
 menu()
-    
+   
 class ClinicaMovilGUI(ctk.CTk):
     def __init__(self):
         super().__init__()
