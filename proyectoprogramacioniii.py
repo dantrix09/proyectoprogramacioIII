@@ -23,7 +23,7 @@ def crear_tablas():
         username TEXT NOT NULL UNIQUE,
         nombre_completo TEXT,
         correo TEXT UNIQUE,
-        rol TEXT NOT NULL, -- ENUM removido
+        rol TEXT NOT NULL, 
         activo INTEGER DEFAULT 1,
         fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP
     );
@@ -199,14 +199,14 @@ def insertar_datos_aplicacion_vacuna(clinica_id, vacuna_id, lote, cantidad, comu
     cursor.execute(query, (clinica_id, vacuna_id, lote, cantidad, comunidad, paciente_identificacion, responsable_id, evidencia_firma))
     conn.commit()
     return cursor.lastrowid
-def insertar_datos_alerta(tipo, mensaje, clinica_id, equipo_id, vacuna_id, severidad, metadata):
+def insertar_datos_alerta(tipo, mensaje, clinica_id, equipo_id, vacuna_id, severidad):
     query = """
-    INSERT INTO alertas (tipo, mensaje, clinica_id, equipo_id, vacuna_id, severidad, metadata)
-    VALUES (?, ?, ?, ?, ?, ?, ?);
+    INSERT INTO alertas (tipo, mensaje, clinica_id, equipo_id, vacuna_id, severidad)
+    VALUES (?, ?, ?, ?, ?, ?);
     """
-    cursor.execute(query, (tipo, mensaje, clinica_id, equipo_id, vacuna_id, severidad, metadata))
+    cursor.execute(query, (tipo, mensaje, clinica_id, equipo_id, vacuna_id, severidad))
     conn.commit()
-    return cursor.lastrowid 
+    return cursor.lastrowid
 def insertar_datos_mantenimiento(equipo_id, tipo_mantenimiento, descripcion, fecha_programada, encargado_id):
     query = """
     INSERT INTO mantenimientos (equipo_id, tipo_mantenimiento, descripcion, fecha_programada, encargado_id)
@@ -506,11 +506,15 @@ def id_comunidad_responsable():
       except ValueError:
         print("Por favor ingrese un ID válido.")    
 def aplicaciones_vacuna_evidencia_firma():
-    evidencia = input("Ingrese la evidencia de firma (ruta del archivo o descripcion): ")
-    if evidencia.strip() == "":
-        print("La evidencia no puede estar vacia. Intente de nuevo.")
-        return aplicaciones_vacuna_evidencia_firma()
-    return evidencia
+    while True:
+        try:
+            evidencia = input("Ingrese la evidencia de firma (ruta del archivo o descripcion): ")
+            if evidencia.strip() == "":
+                print("La evidencia no puede estar vacia. Intente de nuevo.")
+            else:
+                return evidencia
+        except ValueError:
+            print("Entrada invalida. Intente de nuevo.")
 def id_vacuna():
     while True:
       try:
@@ -525,7 +529,7 @@ def id_vacuna():
         print("Por favor ingrese un ID válido.")    
 def registrar_aplicacion_vacuna():  
     clinica_id = id_clinica()
-    vacuna_id = id_vacuna
+    vacuna_id = id_vacuna()
     lote = aplicaciones_vacuna_lote()
     cantidad = aplicaciones_vacuna_cantidad()
     comunidad = id_comunidad_responsable()
@@ -575,16 +579,29 @@ def fecha_creacion_alerta():
     except ValueError:
         print("Formato de fecha invalido. Intente de nuevo.")
         return fecha_creacion_alerta()
+def id_equipo(): 
+    while True:
+      try:
+        id_equipo = int(input('ingrese el ID del equipo medico relacionado con la alerta:'))
+        if id_equipo <= 0:
+          print("El ID debe ser un número positivo.") 
+        elif cursor.execute("SELECT * FROM EQUIPOS_MEDICOS WHERE ID = ?", (id_equipo,)).fetchone() is None:
+          print("No existe un equipo medico con ese ID. Por favor ingrese un ID válido.")
+        else:
+           return id_equipo
+      except ValueError:
+        print("Por favor ingrese un ID válido.")   
+    
 def registrar_alerta():  
     tipo = tipo_alerta()
     mensaje = mensaje_alerta()
     clinica_id = id_clinica()
-    equipo_id = int(input("Ingrese el ID del equipo medico relacionado (0 si no aplica): "))
-    vacuna_id = int(input("Ingrese el ID de la vacuna relacionada (0 si no aplica): "))
+    equipo_id = id_equipo()
+    vacuna_id = id_vacuna()
     severidad = severidad_alerta()
     alerta_id = insertar_datos_alerta(tipo, mensaje, clinica_id, equipo_id, vacuna_id, severidad)
     print(f"Alerta registrada con ID: {alerta_id}")
-def tipo_mantenimiento():
+def mantenimiento_tipo():
     tipo_mantenimiento = input("Ingrese el tipo de mantenimiento: ")
     if tipo_mantenimiento.strip() == "":
         print("El tipo de mantenimiento no puede estar vacio. Intente de nuevo.")
@@ -610,15 +627,16 @@ def id_encargado():
         id_encargado = int(input('ingrese el ID del encargado del mantenimiento:'))
         if id_encargado <= 0:
           print("El ID debe ser un número positivo.") 
-        elif cursor.execute("SELECT * FROM USUARIOS WHERE ID = ?", (id_encargado,)).fetchone() is None:
-          print("No existe un usuario con ese ID. Por favor ingrese un ID válido.")
+        elif cursor.execute("SELECT * FROM usuarios WHERE id = ? AND LOWER(rol) = 'tecnico'",(id_encargado,)).fetchone() is None:
+          print("No existe un usuario con ese ID con rol de tecnico. Por favor ingrese un ID válido.")
         else:
            return id_encargado
       except ValueError:
         print("Por favor ingrese un ID válido.")    
+
 def registrar_mantenimiento():  
-    equipo_id = int(input("Ingrese el ID del equipo medico: "))
-    tipo_mantenimiento = tipo_mantenimiento()
+    equipo_id = id_equipo()
+    tipo_mantenimiento = mantenimiento_tipo()
     descripcion = descripcion_mantenimiento()
     fecha_programada = fecha_programada_mantenimiento()
     encargado_id = id_encargado()
