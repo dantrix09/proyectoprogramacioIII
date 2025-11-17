@@ -668,50 +668,6 @@ def registrar_auditoria():
     auditoria_id = insertar_datos_auditoria(tabla_afectada, registro_id, accion, usuario_id, valores_anteriores, valores_nuevos)
     print(f"Auditoria registrada con ID: {auditoria_id}")   
 
-def menu():
-    while True:
-        try:
-            match input("""Seleccione una opcion:
-            1. Registrar clinica
-            2. Registrar usuario
-            3. Registrar equipo medico
-            4. Registrar vacuna
-            5. Registrar ruta
-            6. Registrar registro de temperatura
-            7. Registrar aplicacion de vacuna
-            8. Registrar alerta
-            9. Registrar mantenimiento
-            10. Registrar auditoria
-            0. Salir
-            Opcion: """):
-                case '1':
-                    registrar_clinica()
-                case '2':
-                    registrar_usuario()
-                case '3':
-                    registrar_equipo_medico()
-                case '4':
-                    registrar_vacuna()
-                case '5':
-                    registrar_ruta()
-                case '6':
-                    registrar_registro_temperatura()
-                case '7':
-                    registrar_aplicacion_vacuna()
-                case '8':
-                    registrar_alerta()
-                case '9':
-                    registrar_mantenimiento()
-                case '10':
-                    registrar_auditoria()
-                case '0':
-                    print("Saliendo del programa.")
-                    return
-                case _:
-                    print("Opcion invalida. Intente de nuevo.")
-        except ValueError:
-            print("Entrada invalida. Intente de nuevo.")            
-menu()
    
 class ClinicaMovilGUI(ctk.CTk):
     def __init__(self):
