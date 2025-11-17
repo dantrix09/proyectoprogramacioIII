@@ -548,14 +548,17 @@ def mensaje_alerta():
         return mensaje_alerta()
     return mensaje
 def severidad_alerta():
-    severidad = input("Ingrese la severidad de la alerta (baja, media, alta): ")
-    if severidad.strip() == "":
-        print("La severidad no puede estar vacia. Intente de nuevo.")
-    elif severidad not in ['baja', 'media', 'alta']:
-        print("Severidad invalida. Intente de nuevo.")
-    else:
-        return severidad    
-    ##leida tiene que ser 0 o 1
+    while True:
+        try:
+            severidad = input("Ingrese la severidad de la alerta (baja, media, alta): ")
+            if severidad.strip() == "":
+                print("La severidad no puede estar vacia. Intente de nuevo.")
+            elif severidad not in ['baja', 'media', 'alta']:
+                print("Severidad invalida. Intente de nuevo.")
+            else:
+                return severidad    
+        except ValueError:
+            print("Entrada invalida. Intente de nuevo.")
 def leida():
     leida = input("Ingrese si la alerta ha sido leida (0 para no, 1 para si): ")
     if leida.strip() == "":
