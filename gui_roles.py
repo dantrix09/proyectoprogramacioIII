@@ -1,16 +1,23 @@
 import customtkinter as ctk
 from tkinter import messagebox
 
+import customtkinter as ctk
+from tkinter import messagebox
+
 class InterfazRoles:
     def __init__(self, parent_frame):
         self.parent = parent_frame
         self.rol_actual = "Operador"
         
     def mostrar_interfaz_roles(self):
+<<<<<<< Updated upstream
         self.limpiar_parent()
         
+=======
+        # NO limpiar el parent - ya viene limpio
+>>>>>>> Stashed changes
         frame_rol = ctk.CTkFrame(self.parent)
-        frame_rol.grid(row=1, column=0, padx=20, pady=10, sticky="ew")
+        frame_rol.pack(padx=20, pady=10, fill="x")
         
         ctk.CTkLabel(frame_rol, text="Seleccionar Rol:", font=ctk.CTkFont(weight="bold")).pack(side="left", padx=10)
         
@@ -21,10 +28,10 @@ class InterfazRoles:
         self.combo_rol.set(self.rol_actual)
         
         self.frame_funcionalidades = ctk.CTkFrame(self.parent)
-        self.frame_funcionalidades.grid(row=2, column=0, padx=20, pady=10, sticky="nsew")
+        self.frame_funcionalidades.pack(padx=20, pady=10, fill="both", expand=True)
         
         self.mostrar_funcionalidades_rol()
-    
+
     def cambiar_rol(self, rol_seleccionado):
         self.rol_actual = rol_seleccionado
         self.mostrar_funcionalidades_rol()
