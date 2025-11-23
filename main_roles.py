@@ -32,3 +32,5 @@ class AppRoles(ctk.CTk):
 if __name__ == "__main__":
     app = AppRoles()
     app.mainloop()
+
+#Marvel Rivals no se jajdajdjajajd

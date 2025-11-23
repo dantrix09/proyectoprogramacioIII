@@ -4,13 +4,15 @@ from tkinter import messagebox
 import customtkinter as ctk
 from tkinter import messagebox
 
+import customtkinter as ctk
+from tkinter import messagebox
+
 class InterfazRoles:
     def __init__(self, parent_frame):
         self.parent = parent_frame
         self.rol_actual = "Operador"
         
     def mostrar_interfaz_roles(self):
-        # NO limpiar el parent - ya viene limpio
         frame_rol = ctk.CTkFrame(self.parent)
         frame_rol.pack(padx=20, pady=10, fill="x")
         
