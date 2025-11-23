@@ -5,6 +5,7 @@ from proyectoprogramacioniii import *
 from control_temp import ControlTemperatura
 from auditoria_gui import AuditoriaGUI
 from aplicacion_vac_gui import AplicacionVacunaGUI
+from ver_api_vacuna import VerAplicacionesVacunaGUI
 
 class ClinicaMovilGUI(ctk.CTk):
     def __init__(self):
@@ -98,6 +99,11 @@ class ClinicaMovilGUI(ctk.CTk):
                                          command=self.mostrar_aplicacion_vacuna_gui,
                                          fg_color="#2E8B57", hover_color="#228B22")
         self.btn_aplicacion_vacuna.pack(pady=2, padx=10, fill="x")
+
+        self.btn_ver_aplicaciones = ctk.CTkButton(self.sidebar_frame, text="Ver Vacunas Aplicadas", 
+                                        command=self.mostrar_aplicaciones_vacuna_gui,
+                                        fg_color="#8A2BE2", hover_color="#7B68EE")
+        self.btn_ver_aplicaciones.pack(pady=2, padx=10, fill="x")
 
     def crear_main_content(self):
         self.main_frame = ctk.CTkFrame(self)
@@ -610,6 +616,13 @@ class ClinicaMovilGUI(ctk.CTk):
     
         aplicacion_vacuna_gui = AplicacionVacunaGUI(self.content_frame)
         aplicacion_vacuna_gui.mostrar_interfaz_aplicacion_vacuna()
+
+    def mostrar_aplicaciones_vacuna_gui(self):
+        self.limpiar_content_frame()
+        self.titulo_main.configure(text="Vacunas Aplicadas")
+    
+        aplicaciones_gui = VerAplicacionesVacunaGUI(self.content_frame)
+        aplicaciones_gui.mostrar_interfaz_aplicaciones()
 
     def mostrar_rutas(self):
         self.limpiar_content_frame()
