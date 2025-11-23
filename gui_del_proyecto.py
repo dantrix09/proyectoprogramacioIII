@@ -260,3 +260,5 @@ class ClinicaMovilGUI(ctk.CTk):
 if __name__ == "__main__":
     app = ClinicaMovilGUI()
     app.mainloop()
+
+    #jajajajjaja
