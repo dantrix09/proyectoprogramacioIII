@@ -742,7 +742,7 @@ def registrar_auditoria():
     accion = accion_auditoria()
     usuario_id = usuario_id()
     valores_anteriores = input("Ingrese los valores anteriores (formato JSON o texto): ")
-    valores_nuevos = modificar_datos_tablas
+    valores_nuevos = modificar_datos_tablas()
     auditoria_id = insertar_datos_auditoria(tabla_afectada, registro_id, accion, usuario_id, valores_anteriores, valores_nuevos)
     print(f"Auditoria registrada con ID: {auditoria_id}") 
       
