@@ -16,6 +16,7 @@ class ClinicaMovilGUI(ctk.CTk):
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
         
+        # Conexión a la base de datos
         self.conn = sqlite3.connect('basededatosclinicas.db')
         self.cursor = self.conn.cursor()
         
@@ -51,15 +52,18 @@ class ClinicaMovilGUI(ctk.CTk):
         self.btn_roles.pack(pady=5)
 
     def crear_main_content(self):
+        # Frame principal
         self.main_frame = ctk.CTkFrame(self)
         self.main_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
         self.main_frame.grid_columnconfigure(0, weight=1)
         self.main_frame.grid_rowconfigure(1, weight=1)
         
+        # Título que NUNCA se destruye
         self.titulo_main = ctk.CTkLabel(self.main_frame, text="Sistema de Gestion de Clinicas Moviles", 
                                       font=ctk.CTkFont(size=16, weight="bold"))
         self.titulo_main.grid(row=0, column=0, padx=20, pady=20)
         
+        # Frame para contenido dinámico (esto es lo que se limpia)
         self.content_frame = ctk.CTkFrame(self.main_frame)
         self.content_frame.grid(row=1, column=0, padx=20, pady=10, sticky="nsew")
         self.content_frame.grid_columnconfigure(0, weight=1)
@@ -260,5 +264,3 @@ class ClinicaMovilGUI(ctk.CTk):
 if __name__ == "__main__":
     app = ClinicaMovilGUI()
     app.mainloop()
-
-    #jajajajjaja
