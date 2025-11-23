@@ -32,14 +32,6 @@ class AuditoriaGUI:
         self.entry_registro_id = ctk.CTkEntry(frame_form, width=300, placeholder_text="Número del registro afectado")
         self.entry_registro_id.grid(row=1, column=1, padx=10, pady=10)
         
-        label_accion = ctk.CTkLabel(frame_form, text="Acción:")
-        label_accion.grid(row=2, column=0, padx=10, pady=10, sticky="w")
-        self.combo_accion = ctk.CTkComboBox(frame_form, 
-                                     values=["INSERT", "UPDATE", "DELETE"],
-                                     width=300)
-        self.combo_accion.grid(row=2, column=1, padx=10, pady=10)
-        self.combo_accion.set("INSERT")
-        
         label_usuario_id = ctk.CTkLabel(frame_form, text="ID del Usuario:")
         label_usuario_id.grid(row=3, column=0, padx=10, pady=10, sticky="w")
         self.entry_usuario_id = ctk.CTkEntry(frame_form, width=300, placeholder_text="ID del usuario que realizó la acción")

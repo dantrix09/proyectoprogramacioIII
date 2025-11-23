@@ -4,13 +4,14 @@ import sqlite3
 from proyectoprogramacioniii import *
 from control_temp import ControlTemperatura
 from auditoria_gui import AuditoriaGUI
+from aplicacion_vac_gui import AplicacionVacunaGUI
 
 class ClinicaMovilGUI(ctk.CTk):
     def __init__(self):
         super().__init__()
         
         self.title("Sistema Clinicas Moviles")
-        self.geometry("1000x600")
+        self.geometry("1000x850")
         
         ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("blue")
@@ -92,6 +93,11 @@ class ClinicaMovilGUI(ctk.CTk):
                                          command=self.mostrar_auditoria_gui,
                                          fg_color="#8B4513", hover_color="#A0522D")
         self.btn_auditoria.pack(pady=2, padx=10, fill="x")
+
+        self.btn_aplicacion_vacuna = ctk.CTkButton(self.sidebar_frame, text="Aplicar Vacuna", 
+                                         command=self.mostrar_aplicacion_vacuna_gui,
+                                         fg_color="#2E8B57", hover_color="#228B22")
+        self.btn_aplicacion_vacuna.pack(pady=2, padx=10, fill="x")
 
     def crear_main_content(self):
         self.main_frame = ctk.CTkFrame(self)
@@ -577,6 +583,8 @@ class ClinicaMovilGUI(ctk.CTk):
         tree = ttk.Treeview(frame_tabla, columns=("Lote", "Tipo", "Cantidad", "Vencimiento"), 
                           show="headings", height=15)
         
+    
+        
         tree.heading("Lote", text="Lote")
         tree.heading("Tipo", text="Tipo")
         tree.heading("Cantidad", text="Cantidad")
@@ -596,6 +604,13 @@ class ClinicaMovilGUI(ctk.CTk):
         tree.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
         
+    def mostrar_aplicacion_vacuna_gui(self):
+        self.limpiar_content_frame()
+        self.titulo_main.configure(text="Aplicación de Vacunas")
+    
+        aplicacion_vacuna_gui = AplicacionVacunaGUI(self.content_frame)
+        aplicacion_vacuna_gui.mostrar_interfaz_aplicacion_vacuna()
+
     def mostrar_rutas(self):
         self.limpiar_content_frame()
         self.titulo_main.configure(text="Gestion de Rutas")
