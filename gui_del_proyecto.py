@@ -6,13 +6,14 @@ from control_temp import ControlTemperatura
 from auditoria_gui import AuditoriaGUI
 from aplicacion_vac_gui import AplicacionVacunaGUI
 from ver_api_vacuna import VerAplicacionesVacunaGUI
+from gui_mantenimiento import MantenimientoGUI, VerMantenimientosGUI
 
 class ClinicaMovilGUI(ctk.CTk):
     def __init__(self):
         super().__init__()
         
         self.title("Sistema Clinicas Moviles")
-        self.geometry("1000x600")
+        self.geometry("1100x700")
         
         ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("blue")
@@ -31,7 +32,7 @@ class ClinicaMovilGUI(ctk.CTk):
         self.sidebar_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
         
         self.titulo_sidebar = ctk.CTkLabel(self.sidebar_frame, text="CLINICAS MOVILES", 
-                                         font=ctk.CTkFont(weight="bold", size=14))
+                                           font=ctk.CTkFont(weight="bold", size=14))
         self.titulo_sidebar.pack(pady=20)
         
         label_registros = ctk.CTkLabel(self.sidebar_frame, text="REGISTROS", 
@@ -57,6 +58,11 @@ class ClinicaMovilGUI(ctk.CTk):
         self.btn_registrar_ruta = ctk.CTkButton(self.sidebar_frame, text="Registrar Ruta", 
                                               command=self.mostrar_registro_ruta)
         self.btn_registrar_ruta.pack(pady=2, padx=10, fill="x")
+
+        self.btn_reg_mantenimiento = ctk.CTkButton(self.sidebar_frame, text="Programar Mantenimiento", 
+                                                 fg_color="#D2691E", hover_color="#A0522D",
+                                                 command=self.mostrar_registro_mantenimiento)
+        self.btn_reg_mantenimiento.pack(pady=2, padx=10, fill="x")
         
         self.btn_aplicar_vacuna = ctk.CTkButton(self.sidebar_frame, text="Aplicar Vacuna", 
                                               command=self.mostrar_aplicacion_vacuna_gui,
@@ -78,6 +84,10 @@ class ClinicaMovilGUI(ctk.CTk):
         self.btn_ver_equipos = ctk.CTkButton(self.sidebar_frame, text="Ver Equipos", 
                                            command=self.mostrar_equipos)
         self.btn_ver_equipos.pack(pady=2, padx=10, fill="x")
+
+        self.btn_ver_mantenimientos = ctk.CTkButton(self.sidebar_frame, text="Ver Mantenimientos", 
+                                                  command=self.mostrar_lista_mantenimientos)
+        self.btn_ver_mantenimientos.pack(pady=2, padx=10, fill="x")
         
         self.btn_temperatura = ctk.CTkButton(self.sidebar_frame, text="Control Temperatura", 
                                            command=self.mostrar_temperatura_gui)
@@ -251,9 +261,33 @@ class ClinicaMovilGUI(ctk.CTk):
         
         label_rol = ctk.CTkLabel(frame_form, text="Rol:")
         label_rol.grid(row=3, column=0, padx=10, pady=10, sticky="w")
-        combo_rol = ctk.CTkComboBox(frame_form, values=["admin", "medico", "mantenimiento"], width=300)
+        
+        # --- CAMBIO REALIZADO AQUÍ: Se eliminó "mantenimiento" ---
+        combo_rol = ctk.CTkComboBox(frame_form, values=["admin", "medico", "tecnico"], width=300)
         combo_rol.grid(row=3, column=1, padx=10, pady=10)
         combo_rol.set("medico")
+        
+        def guardar_usuario():
+            username = entry_username.get()
+            nombre_completo = entry_nombre_completo.get()
+            correo = entry_correo.get()
+            rol = combo_rol.get()
+            
+            if username and nombre_completo and correo and rol:
+                try:
+                    insertar_datos_usuario(username, nombre_completo, correo, rol)
+                    messagebox.showinfo("Exito", "Usuario registrado correctamente")
+                    entry_username.delete(0, 'end')
+                    entry_nombre_completo.delete(0, 'end')
+                    entry_correo.delete(0, 'end')
+                    combo_rol.set("medico")
+                except Exception as e:
+                    messagebox.showerror("Error", f"Error al registrar usuario: {str(e)}")
+            else:
+                messagebox.showerror("Error", "Complete todos los campos")
+        
+        btn_guardar = ctk.CTkButton(frame_form, text="Registrar Usuario", command=guardar_usuario)
+        btn_guardar.grid(row=4, column=0, columnspan=2, pady=20)
         
         def guardar_usuario():
             username = entry_username.get()
@@ -572,7 +606,6 @@ class ClinicaMovilGUI(ctk.CTk):
     def mostrar_temperatura_gui(self):
         self.limpiar_content_frame()
         self.titulo_main.configure(text="Control de Cadena de Frio")
-        
         control_temp = ControlTemperatura(self.content_frame)
         control_temp.mostrar_interfaz_temperatura()
         
@@ -670,23 +703,32 @@ class ClinicaMovilGUI(ctk.CTk):
     def mostrar_aplicacion_vacuna_gui(self):
         self.limpiar_content_frame()
         self.titulo_main.configure(text="Aplicación de Vacunas")
-        
         aplicacion_vacuna_gui = AplicacionVacunaGUI(self.content_frame)
         aplicacion_vacuna_gui.mostrar_interfaz_aplicacion_vacuna()
             
     def mostrar_aplicaciones_vacuna_gui(self):
         self.limpiar_content_frame()
         self.titulo_main.configure(text="Vacunas Aplicadas")
-        
         aplicaciones_gui = VerAplicacionesVacunaGUI(self.content_frame)
         aplicaciones_gui.mostrar_interfaz_aplicaciones()
             
     def mostrar_auditoria_gui(self):
         self.limpiar_content_frame()
         self.titulo_main.configure(text="Registro de Auditoria")
-        
         auditoria_gui = AuditoriaGUI(self.content_frame)
         auditoria_gui.mostrar_interfaz_auditoria()
+
+    def mostrar_registro_mantenimiento(self):
+        self.limpiar_content_frame()
+        self.titulo_main.configure(text="Programar Mantenimiento")
+        gui = MantenimientoGUI(self.content_frame)
+        gui.mostrar_interfaz_registro()
+
+    def mostrar_lista_mantenimientos(self):
+        self.limpiar_content_frame()
+        self.titulo_main.configure(text="Historial de Mantenimientos")
+        gui = VerMantenimientosGUI(self.content_frame)
+        gui.mostrar_tabla()
 
 if __name__ == "__main__":
     app = ClinicaMovilGUI()
