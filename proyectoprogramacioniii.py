@@ -134,7 +134,6 @@ def crear_tablas():
     CREATE TABLE IF NOT EXISTS auditoria (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         tabla_afectada TEXT NOT NULL,
-        registro_id INTEGER,
         accion TEXT NOT NULL,
         usuario_id INTEGER,
         valores_anteriores TEXT,
@@ -220,12 +219,12 @@ def insertar_datos_mantenimiento(equipo_id, tipo_mantenimiento, descripcion, fec
     cursor.execute(query, (equipo_id, tipo_mantenimiento, descripcion, fecha_programada, encargado_id))
     conn.commit()
     return cursor.lastrowid 
-def insertar_datos_auditoria(tabla_afectada, registro_id, accion, usuario_id, valores_anteriores, valores_nuevos):    
+def insertar_datos_auditoria(tabla_afectada, accion, usuario_id, valores_anteriores, valores_nuevos):    
     query = """
-    INSERT INTO auditoria (tabla_afectada, registro_id, accion, usuario_id, valores_anteriores, valores_nuevos)
-    VALUES (?, ?, ?, ?, ?, ?);
+    INSERT INTO auditoria (tabla_afectada, accion, usuario_id, valores_anteriores, valores_nuevos)
+    VALUES (?, ?, ?, ?, ?);
     """
-    cursor.execute(query, (tabla_afectada, registro_id, accion, usuario_id, valores_anteriores, valores_nuevos))
+    cursor.execute(query, (tabla_afectada, accion, usuario_id, valores_anteriores, valores_nuevos))
     conn.commit()
     return cursor.lastrowid
 
@@ -738,12 +737,11 @@ def modificar_datos_tablas():
 
 def registrar_auditoria():  
     tabla_afectada = tabla_afectada()
-    registro_id = int(input("Ingrese el ID del registro afectado: "))
     accion = accion_auditoria()
     usuario_id = usuario_id()
     valores_anteriores = input("Ingrese los valores anteriores (formato JSON o texto): ")
     valores_nuevos = modificar_datos_tablas()
-    auditoria_id = insertar_datos_auditoria(tabla_afectada, registro_id, accion, usuario_id, valores_anteriores, valores_nuevos)
+    auditoria_id = insertar_datos_auditoria(tabla_afectada, accion, usuario_id, valores_anteriores, valores_nuevos)
     print(f"Auditoria registrada con ID: {auditoria_id}") 
       
 def eliminar_clinica():
