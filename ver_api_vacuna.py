@@ -25,9 +25,13 @@ class VerAplicacionesVacunaGUI:
                                      command=self.actualizar_lista)
         btn_actualizar.pack(side="left", padx=10)
         
-        btn_exportar = ctk.CTkButton(frame_controles, text="Estadísticas",
-                                   command=self.mostrar_estadisticas)
-        btn_exportar.pack(side="left", padx=10)
+        btn_estadisticas = ctk.CTkButton(frame_controles, text="Estadísticas",
+                                       command=self.mostrar_estadisticas)
+        btn_estadisticas.pack(side="left", padx=10)
+        
+        btn_registrar_nueva = ctk.CTkButton(frame_controles, text="Nueva Aplicación",
+                                          command=self.registrar_nueva_aplicacion)
+        btn_registrar_nueva.pack(side="left", padx=10)
         
         frame_tabla = ctk.CTkFrame(self.parent)
         frame_tabla.pack(fill="both", expand=True, padx=20, pady=10)
@@ -65,7 +69,6 @@ class VerAplicacionesVacunaGUI:
         self.cargar_aplicaciones()
 
     def cargar_aplicaciones(self):
-        """Carga las aplicaciones de vacunas desde la base de datos"""
         try:
             for item in self.tree.get_children():
                 self.tree.delete(item)
@@ -105,12 +108,10 @@ class VerAplicacionesVacunaGUI:
             messagebox.showerror("Error", f"Error al cargar aplicaciones: {str(e)}")
 
     def actualizar_lista(self):
-        """Actualiza la lista de aplicaciones"""
         self.cargar_aplicaciones()
         messagebox.showinfo("Actualizado", "Lista de aplicaciones actualizada")
 
     def mostrar_estadisticas(self):
-        """Muestra estadísticas de las aplicaciones"""
         try:
             query_total = "SELECT COUNT(*) as total, SUM(cantidad) as total_dosis FROM aplicaciones_vacuna"
             self.cursor.execute(query_total)
@@ -126,26 +127,15 @@ class VerAplicacionesVacunaGUI:
             self.cursor.execute(query_por_vacuna)
             por_vacuna = self.cursor.fetchall()
             
-            query_por_comunidad = """
-            SELECT comunidad, COUNT(*) as aplicaciones, SUM(cantidad) as dosis
-            FROM aplicaciones_vacuna
-            GROUP BY comunidad
-            ORDER BY dosis DESC
-            LIMIT 10
-            """
-            self.cursor.execute(query_por_comunidad)
-            por_comunidad = self.cursor.fetchall()
-            
-            self.mostrar_ventana_estadisticas(totales, por_vacuna, por_comunidad)
+            self.mostrar_ventana_estadisticas(totales, por_vacuna)
             
         except Exception as e:
             messagebox.showerror("Error", f"Error al generar estadísticas: {str(e)}")
 
-    def mostrar_ventana_estadisticas(self, totales, por_vacuna, por_comunidad):
-        """Muestra una ventana con las estadísticas"""
+    def mostrar_ventana_estadisticas(self, totales, por_vacuna):
         ventana = ctk.CTkToplevel(self.parent)
         ventana.title("Estadísticas de Vacunación")
-        ventana.geometry("600x500")
+        ventana.geometry("500x400")
         ventana.transient(self.parent)
         ventana.grab_set()
         
@@ -175,22 +165,16 @@ class VerAplicacionesVacunaGUI:
             texto = f"  {tipo}: {aplicaciones} aplicaciones, {dosis} dosis"
             ctk.CTkLabel(frame_vacunas, text=texto).pack(anchor="w")
         
-        frame_comunidades = ctk.CTkFrame(frame_principal)
-        frame_comunidades.pack(fill="x", padx=10, pady=10)
-        
-        ctk.CTkLabel(frame_comunidades, text="Top 10 Comunidades:",
-                   font=ctk.CTkFont(weight="bold")).pack(anchor="w")
-        
-        for comunidad in por_comunidad:
-            nombre, aplicaciones, dosis = comunidad
-            texto = f"  {nombre}: {aplicaciones} aplicaciones, {dosis} dosis"
-            ctk.CTkLabel(frame_comunidades, text=texto).pack(anchor="w")
-        
         btn_cerrar = ctk.CTkButton(frame_principal, text="Cerrar",
                                  command=ventana.destroy)
         btn_cerrar.pack(pady=10)
 
+    def registrar_nueva_aplicacion(self):
+        from aplicacion_vac_gui import AplicacionVacunaGUI
+        self.limpiar_parent()
+        aplicacion_gui = AplicacionVacunaGUI(self.parent)
+        aplicacion_gui.mostrar_interfaz_aplicacion_vacuna()
+
     def limpiar_parent(self):
-        """Limpia el frame padre"""
         for widget in self.parent.winfo_children():
             widget.destroy()

@@ -12,7 +12,7 @@ class ClinicaMovilGUI(ctk.CTk):
         super().__init__()
         
         self.title("Sistema Clinicas Moviles")
-        self.geometry("1000x850")
+        self.geometry("1000x600")
         
         ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("blue")
@@ -58,6 +58,11 @@ class ClinicaMovilGUI(ctk.CTk):
                                               command=self.mostrar_registro_ruta)
         self.btn_registrar_ruta.pack(pady=2, padx=10, fill="x")
         
+        self.btn_aplicar_vacuna = ctk.CTkButton(self.sidebar_frame, text="Aplicar Vacuna", 
+                                              command=self.mostrar_aplicacion_vacuna_gui,
+                                              fg_color="#2E8B57", hover_color="#228B22")
+        self.btn_aplicar_vacuna.pack(pady=2, padx=10, fill="x")
+        
         label_consultas = ctk.CTkLabel(self.sidebar_frame, text="CONSULTAS", 
                                      font=ctk.CTkFont(weight="bold"))
         label_consultas.pack(pady=(15,5))
@@ -90,20 +95,15 @@ class ClinicaMovilGUI(ctk.CTk):
                                        command=self.mostrar_alertas)
         self.btn_alertas.pack(pady=2, padx=10, fill="x")
         
+        self.btn_ver_aplicaciones = ctk.CTkButton(self.sidebar_frame, text="Ver Vacunas Aplicadas", 
+                                                command=self.mostrar_aplicaciones_vacuna_gui,
+                                                fg_color="#8A2BE2", hover_color="#7B68EE")
+        self.btn_ver_aplicaciones.pack(pady=2, padx=10, fill="x")
+        
         self.btn_auditoria = ctk.CTkButton(self.sidebar_frame, text="Agregar Auditoria", 
                                          command=self.mostrar_auditoria_gui,
                                          fg_color="#8B4513", hover_color="#A0522D")
         self.btn_auditoria.pack(pady=2, padx=10, fill="x")
-
-        self.btn_aplicacion_vacuna = ctk.CTkButton(self.sidebar_frame, text="Aplicar Vacuna", 
-                                         command=self.mostrar_aplicacion_vacuna_gui,
-                                         fg_color="#2E8B57", hover_color="#228B22")
-        self.btn_aplicacion_vacuna.pack(pady=2, padx=10, fill="x")
-
-        self.btn_ver_aplicaciones = ctk.CTkButton(self.sidebar_frame, text="Ver Vacunas Aplicadas", 
-                                        command=self.mostrar_aplicaciones_vacuna_gui,
-                                        fg_color="#8A2BE2", hover_color="#7B68EE")
-        self.btn_ver_aplicaciones.pack(pady=2, padx=10, fill="x")
 
     def crear_main_content(self):
         self.main_frame = ctk.CTkFrame(self)
@@ -589,8 +589,6 @@ class ClinicaMovilGUI(ctk.CTk):
         tree = ttk.Treeview(frame_tabla, columns=("Lote", "Tipo", "Cantidad", "Vencimiento"), 
                           show="headings", height=15)
         
-    
-        
         tree.heading("Lote", text="Lote")
         tree.heading("Tipo", text="Tipo")
         tree.heading("Cantidad", text="Cantidad")
@@ -610,20 +608,6 @@ class ClinicaMovilGUI(ctk.CTk):
         tree.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
         
-    def mostrar_aplicacion_vacuna_gui(self):
-        self.limpiar_content_frame()
-        self.titulo_main.configure(text="Aplicación de Vacunas")
-    
-        aplicacion_vacuna_gui = AplicacionVacunaGUI(self.content_frame)
-        aplicacion_vacuna_gui.mostrar_interfaz_aplicacion_vacuna()
-
-    def mostrar_aplicaciones_vacuna_gui(self):
-        self.limpiar_content_frame()
-        self.titulo_main.configure(text="Vacunas Aplicadas")
-    
-        aplicaciones_gui = VerAplicacionesVacunaGUI(self.content_frame)
-        aplicaciones_gui.mostrar_interfaz_aplicaciones()
-
     def mostrar_rutas(self):
         self.limpiar_content_frame()
         self.titulo_main.configure(text="Gestion de Rutas")
@@ -682,6 +666,20 @@ class ClinicaMovilGUI(ctk.CTk):
                                      text_color=color,
                                      font=ctk.CTkFont(weight="bold"))
             label_alert.pack(pady=5)
+            
+    def mostrar_aplicacion_vacuna_gui(self):
+        self.limpiar_content_frame()
+        self.titulo_main.configure(text="Aplicación de Vacunas")
+        
+        aplicacion_vacuna_gui = AplicacionVacunaGUI(self.content_frame)
+        aplicacion_vacuna_gui.mostrar_interfaz_aplicacion_vacuna()
+            
+    def mostrar_aplicaciones_vacuna_gui(self):
+        self.limpiar_content_frame()
+        self.titulo_main.configure(text="Vacunas Aplicadas")
+        
+        aplicaciones_gui = VerAplicacionesVacunaGUI(self.content_frame)
+        aplicaciones_gui.mostrar_interfaz_aplicaciones()
             
     def mostrar_auditoria_gui(self):
         self.limpiar_content_frame()
