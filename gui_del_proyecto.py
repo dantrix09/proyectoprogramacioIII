@@ -2,6 +2,7 @@ import customtkinter as ctk
 from tkinter import ttk, messagebox
 import sqlite3
 from proyectoprogramacioniii import *
+from control_temp import ControlTemperatura
 
 class ClinicaMovilGUI(ctk.CTk):
     def __init__(self):
@@ -16,13 +17,12 @@ class ClinicaMovilGUI(ctk.CTk):
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
         
-        # Conexión a la base de datos
         self.conn = sqlite3.connect('basededatosclinicas.db')
         self.cursor = self.conn.cursor()
         
         self.crear_sidebar()
         self.crear_main_content()
-        
+
     def crear_sidebar(self):
         self.sidebar_frame = ctk.CTkFrame(self, width=180)
         self.sidebar_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
@@ -36,7 +36,8 @@ class ClinicaMovilGUI(ctk.CTk):
         self.btn_ver_clinicas = ctk.CTkButton(self.sidebar_frame, text="Ver Clinicas", command=self.mostrar_clinicas)
         self.btn_ver_clinicas.pack(pady=5)
         
-        self.btn_temperatura = ctk.CTkButton(self.sidebar_frame, text="Control Temperatura", command=self.mostrar_temperatura)
+        # BOTÓN CORREGIDO - Control Temperatura
+        self.btn_temperatura = ctk.CTkButton(self.sidebar_frame, text="Control Temperatura", command=self.mostrar_temperatura_gui)
         self.btn_temperatura.pack(pady=5)
         
         self.btn_vacunas = ctk.CTkButton(self.sidebar_frame, text="Gestion Vacunas", command=self.mostrar_vacunas)
@@ -51,26 +52,32 @@ class ClinicaMovilGUI(ctk.CTk):
         self.btn_roles = ctk.CTkButton(self.sidebar_frame, text="Sistema de Roles", command=self.mostrar_roles)
         self.btn_roles.pack(pady=5)
 
+    def mostrar_temperatura_gui(self):
+        """Muestra la interfaz de control de temperatura"""
+        self.limpiar_content_frame()
+        self.titulo_main.configure(text="Control de Cadena de Frío")
+        
+        # Crear instancia de ControlTemperatura
+        control_temp = ControlTemperatura(self.content_frame)
+        control_temp.mostrar_interfaz_temperatura()
+
     def crear_main_content(self):
-        # Frame principal
         self.main_frame = ctk.CTkFrame(self)
         self.main_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
         self.main_frame.grid_columnconfigure(0, weight=1)
         self.main_frame.grid_rowconfigure(1, weight=1)
         
-        # Título que NUNCA se destruye
         self.titulo_main = ctk.CTkLabel(self.main_frame, text="Sistema de Gestion de Clinicas Moviles", 
                                       font=ctk.CTkFont(size=16, weight="bold"))
         self.titulo_main.grid(row=0, column=0, padx=20, pady=20)
         
-        # Frame para contenido dinámico (esto es lo que se limpia)
         self.content_frame = ctk.CTkFrame(self.main_frame)
         self.content_frame.grid(row=1, column=0, padx=20, pady=10, sticky="nsew")
         self.content_frame.grid_columnconfigure(0, weight=1)
         self.content_frame.grid_rowconfigure(0, weight=1)
         
         self.mostrar_inicio()
-        
+
     def mostrar_inicio(self):
         self.limpiar_content_frame()
         
@@ -86,6 +93,22 @@ class ClinicaMovilGUI(ctk.CTk):
         
         label_info = ctk.CTkLabel(self.content_frame, text=info_text, justify="left")
         label_info.pack(pady=50)
+
+    def obtener_total_clinicas(self):
+        self.cursor.execute("SELECT COUNT(*) FROM clinicas")
+        return self.cursor.fetchone()[0]
+    
+    def obtener_total_vacunas(self):
+        self.cursor.execute("SELECT COUNT(*) FROM vacunas")
+        return self.cursor.fetchone()[0]
+    
+    def obtener_total_alertas(self):
+        self.cursor.execute("SELECT COUNT(*) FROM alertas WHERE leida = 0")
+        return self.cursor.fetchone()[0]
+
+    def limpiar_content_frame(self):
+        for widget in self.content_frame.winfo_children():
+            widget.destroy()
     
     def obtener_total_clinicas(self):
         self.cursor.execute("SELECT COUNT(*) FROM clinicas")

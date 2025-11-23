@@ -1,12 +1,6 @@
 import customtkinter as ctk
 from tkinter import messagebox
 
-import customtkinter as ctk
-from tkinter import messagebox
-
-import customtkinter as ctk
-from tkinter import messagebox
-
 class InterfazRoles:
     def __init__(self, parent_frame):
         self.parent = parent_frame
