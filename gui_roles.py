@@ -9,7 +9,6 @@ class InterfazRoles:
     def mostrar_interfaz_roles(self):
         self.limpiar_parent()
         
-        # Frame para selección de rol
         frame_rol = ctk.CTkFrame(self.parent)
         frame_rol.grid(row=1, column=0, padx=20, pady=10, sticky="ew")
         
@@ -21,7 +20,6 @@ class InterfazRoles:
         self.combo_rol.pack(side="left", padx=10)
         self.combo_rol.set(self.rol_actual)
         
-        # Frame para funcionalidades específicas del rol
         self.frame_funcionalidades = ctk.CTkFrame(self.parent)
         self.frame_funcionalidades.grid(row=2, column=0, padx=20, pady=10, sticky="nsew")
         
@@ -60,7 +58,6 @@ class InterfazRoles:
             frame_func.pack(padx=20, pady=5, fill="x")
             ctk.CTkLabel(frame_func, text=f"• {funcion}").pack(pady=2)
         
-        # Botones específicos del Operador
         frame_botones = ctk.CTkFrame(self.frame_funcionalidades)
         frame_botones.pack(pady=20)
         
@@ -76,7 +73,6 @@ class InterfazRoles:
                     text="COORDINADOR LOGÍSTICO - Cerebro Logístico",
                     font=ctk.CTkFont(weight="bold")).pack(pady=10)
         
-        # Funciones del Coordinador
         funciones = [
             "Gestionar inventario de vacunas y medicamentos",
             "Asignar rutas según necesidad y disponibilidad", 
@@ -89,7 +85,6 @@ class InterfazRoles:
             frame_func.pack(padx=20, pady=5, fill="x")
             ctk.CTkLabel(frame_func, text=f"• {funcion}").pack(pady=2)
         
-        # Botones específicos del Coordinador
         frame_botones = ctk.CTkFrame(self.frame_funcionalidades)
         frame_botones.pack(pady=20)
         
@@ -105,7 +100,6 @@ class InterfazRoles:
                     text="ADMINISTRADOR DE SALUD PÚBLICA - Responsable Legal y Técnico",
                     font=ctk.CTkFont(weight="bold")).pack(pady=10)
         
-        # Funciones del Administrador
         funciones = [
             "Definir políticas de cobertura",
             "Generar reportes de impacto", 
@@ -118,7 +112,6 @@ class InterfazRoles:
             frame_func.pack(padx=20, pady=5, fill="x")
             ctk.CTkLabel(frame_func, text=f"• {funcion}").pack(pady=2)
         
-        # Botones específicos del Administrador
         frame_botones = ctk.CTkFrame(self.frame_funcionalidades)
         frame_botones.pack(pady=20)
         
@@ -129,7 +122,6 @@ class InterfazRoles:
         ctk.CTkButton(frame_botones, text="Políticas Cobertura", 
                      command=self.politicas_cobertura).grid(row=0, column=2, padx=5)
     
-    # Métodos simples que solo muestran mensajes
     def registrar_ruta(self):
         messagebox.showinfo("Operador", "Función: Registrar ruta diaria")
     
