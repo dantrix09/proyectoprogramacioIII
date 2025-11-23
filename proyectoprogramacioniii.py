@@ -648,11 +648,13 @@ def registrar_mantenimiento():
     mantenimiento_id = insertar_datos_mantenimiento(equipo_id, tipo_mantenimiento, descripcion, fecha_programada, encargado_id)
     print(f"Mantenimiento registrado con ID: {mantenimiento_id}")
 def tabla_afectada():
-    tabla_afectada = input("Ingrese la tabla afectada: ")
-    if tabla_afectada.strip() == "":
-        print("La tabla afectada no puede estar vacia. Intente de nuevo.")
-        return tabla_afectada()
-    return tabla_afectada
+    tabla = input("Ingrese la tabla afectada (clinicas, usuarios, equipos_medicos, vacunas, rutas, registros_temperatura, aplicaciones_vacuna, alertas, mantenimientos): ")
+    if tabla.strip() == "":
+        print("La tabla no puede estar vacia. Intente de nuevo.")
+    elif tabla not in ['clinicas', 'usuarios', 'equipos_medicos', 'vacunas', 'rutas', 'registros_temperatura', 'aplicaciones_vacuna', 'alertas', 'mantenimientos']:
+        print("Tabla invalida. Intente de nuevo.")
+    else:
+        return tabla
 def accion_auditoria():
     accion = input("Ingrese la accion realizada (INSERT, UPDATE, DELETE): ")
     if accion.strip() == "":
@@ -661,13 +663,263 @@ def accion_auditoria():
         print("Accion invalida. Intente de nuevo.")
     else:
         return accion
+
+def usuario_id():
+    while True:
+      try:
+        usuario_id = int(input('ingrese el ID del usuario que realizo la accion:'))
+        if usuario_id <= 0:
+          print("El ID debe ser un número positivo.") 
+        elif cursor.execute("SELECT * FROM USUARIOS WHERE ID = ? AND LOWER(rol) = 'admin'", (usuario_id,)).fetchone() is None:
+          print("No existe un usuario con ese ID. Por favor ingrese un ID válido.")
+        else:
+           return usuario_id
+      except ValueError:
+        print("Por favor ingrese un ID válido.")
+
+def modificar_datos_tablas():
+    match tabla_afectada():
+        case 'clinicas':
+            match accion_auditoria():
+                case 'UPDATE':
+                    modificar_datos_clinica()
+                case 'DELETE':
+                    eliminar_clinica()
+        case 'usuarios':
+            match accion_auditoria():
+                case 'UPDATE':
+                    modificar_datos_usuario()
+                case 'DELETE':
+                    eliminar_usuario()
+        case 'equipos_medicos':
+            match accion_auditoria():
+                case 'UPDATE':
+                    modificar_datos_equipo_medico()
+                case 'DELETE':
+                    eliminar_equipo_medico()
+        case 'vacunas':
+            match accion_auditoria():   
+                case 'UPDATE':
+                    modificar_datos_vacuna()
+                case 'DELETE':
+                    eliminar_vacuna()
+        case 'rutas':
+            match accion_auditoria():   
+                case 'DELETE':
+                    eliminar_ruta()
+                case 'UPDATE':
+                    modificar_datos_ruta()
+        case 'registros_temperatura':
+            match accion_auditoria():
+                case 'DELETE':
+                    eliminar_registro_temperatura()
+                case'UPDATE':
+                    modificar_datos_registro_temperatura()
+        case 'aplicaciones_vacuna':
+            match accion_auditoria():
+                case 'DELETE':
+                    eliminar_aplicacion_vacuna()
+                case 'UPDATE':
+                    modificar_datos_aplicacion_vacuna()
+        case 'alertas':
+            match accion_auditoria():
+                case 'DELETE':
+                    eliminar_alerta()
+                case 'UPDATE':
+                    modificar_datos_alerta()
+        case 'mantenimientos':
+            match accion_auditoria():
+                case 'DELETE':
+                    eliminar_mantenimiento()
+                case 'UPDATE':
+                    modificar_datos_mantenimiento() 
+                    
+                        
+
 def registrar_auditoria():  
     tabla_afectada = tabla_afectada()
     registro_id = int(input("Ingrese el ID del registro afectado: "))
     accion = accion_auditoria()
-    usuario_id = int(input("Ingrese el ID del usuario que realizo la accion: "))
+    usuario_id = usuario_id()
     valores_anteriores = input("Ingrese los valores anteriores (formato JSON o texto): ")
-    valores_nuevos = input("Ingrese los valores nuevos (formato JSON o texto): ")
+    valores_nuevos = modificar_datos_tablas
     auditoria_id = insertar_datos_auditoria(tabla_afectada, registro_id, accion, usuario_id, valores_anteriores, valores_nuevos)
-    print(f"Auditoria registrada con ID: {auditoria_id}")   
+    print(f"Auditoria registrada con ID: {auditoria_id}") 
+      
+def eliminar_clinica():
+    clinica_id = id_clinica()
+    cursor.execute("DELETE FROM clinicas WHERE id = ?", (clinica_id,))
+    conn.commit()
+    print(f"Clinica con ID {clinica_id} eliminada.")
+def eliminar_usuario():
+    usuario_id = int(input("Ingrese el ID del usuario a eliminar: "))
+    cursor.execute("DELETE FROM usuarios WHERE id = ?", (usuario_id,))
+    conn.commit()
+    print(f"Usuario con ID {usuario_id} eliminado.")
+def eliminar_equipo_medico():
+    equipo_id = id_equipo()
+    cursor.execute("DELETE FROM equipos_medicos WHERE id = ?", (equipo_id,))
+    conn.commit()
+    print(f"Equipo medico con ID {equipo_id} eliminado.")
+def eliminar_vacuna():
+    vacuna_id = id_vacuna()
+    cursor.execute("DELETE FROM vacunas WHERE id = ?", (vacuna_id,))
+    conn.commit()
+    print(f"Vacuna con ID {vacuna_id} eliminada.")
+def eliminar_ruta():
+    ruta_id = int(input("Ingrese el ID de la ruta a eliminar: "))
+    cursor.execute("DELETE FROM rutas WHERE id = ?", (ruta_id,))
+    conn.commit()
+    print(f"Ruta con ID {ruta_id} eliminada.")  
+def eliminar_registro_temperatura():
+    registro_id = int(input("Ingrese el ID del registro de temperatura a eliminar: "))
+    cursor.execute("DELETE FROM registros_temperatura WHERE id = ?", (registro_id,))
+    conn.commit()
+    print(f"Registro de temperatura con ID {registro_id} eliminado.")   
+def eliminar_aplicacion_vacuna():
+    aplicacion_id = int(input("Ingrese el ID de la aplicacion de vacuna a eliminar: "))
+    cursor.execute("DELETE FROM aplicaciones_vacuna WHERE id = ?", (aplicacion_id,))
+    conn.commit()
+    print(f"Aplicacion de vacuna con ID {aplicacion_id} eliminada.")
+def eliminar_alerta():
+    alerta_id = int(input("Ingrese el ID de la alerta a eliminar: "))
+    cursor.execute("DELETE FROM alertas WHERE id = ?", (alerta_id,))
+    conn.commit()
+    print(f"Alerta con ID {alerta_id} eliminada.")
+def eliminar_mantenimiento():
+    mantenimiento_id = int(input("Ingrese el ID del mantenimiento a eliminar: "))
+    cursor.execute("DELETE FROM mantenimientos WHERE id = ?", (mantenimiento_id,))
+    conn.commit()
+    print(f"Mantenimiento con ID {mantenimiento_id} eliminado.")
+
+def modificar_datos_clinica():
+    clinica_id = id_clinica()
+    nuevo_nombre = nombre_clinica()
+    nuevo_ubicacion = ubicacion_base()
+    nuevo_latitud = latitud()
+    nuevo_longitud = longitud()
+    cursor.execute("""
+        UPDATE clinicas
+        SET nombre = ?, ubicacion_base = ?, latitud = ?, longitud = ?
+        WHERE id = ?;
+    """, (nuevo_nombre, nuevo_ubicacion, nuevo_latitud, nuevo_longitud, clinica_id))
+    conn.commit()
+    print(f"Clinica con ID {clinica_id} modificada.")   
+def modificar_datos_usuario():
+    usuario_id = int(input("Ingrese el ID del usuario a modificar: "))
+    nuevo_username = usuario_username()
+    nuevo_nombre_completo = usuario_nombre_completo()
+    nuevo_correo = usuario_correo()
+    nuevo_rol = usuario_rol()
+    cursor.execute("""
+        UPDATE usuarios
+        SET username = ?, nombre_completo = ?, correo = ?, rol = ?
+        WHERE id = ?;
+    """, (nuevo_username, nuevo_nombre_completo, nuevo_correo, nuevo_rol, usuario_id))
+    conn.commit()
+    print(f"Usuario con ID {usuario_id} modificado.")   
+def modificar_datos_equipo_medico():
+    equipo_id = id_equipo()
+    nuevo_tipo = tipo_equipo()
+    nuevo_modelo = modelo_equipo()
+    nuevo_numero_serie = numero_serie_equipo()
+    nuevo_clinica_id = id_clinica()
+    nuevo_capacidad_litros = capacidad_litros_equipo()
+    cursor.execute("""
+        UPDATE equipos_medicos
+        SET tipo = ?, modelo = ?, numero_serie = ?, clinica_id = ?, capacidad_litros = ?
+        WHERE id = ?;
+    """, (nuevo_tipo, nuevo_modelo, nuevo_numero_serie, nuevo_clinica_id, nuevo_capacidad_litros, equipo_id))
+    conn.commit()
+    print(f"Equipo medico con ID {equipo_id} modificado.")
+def modificar_datos_vacuna():
+    vacuna_id = id_vacuna()
+    nuevo_lote = lote_vacuna()
+    nuevo_tipo = tipo_vacuna()
+    nuevo_cantidad = cantidad_vacuna()
+    nuevo_temperatura_minima = temperatura_minima_vacuna()
+    nuevo_temperatura_maxima = temperatura_maxima_vacuna()
+    nuevo_fecha_vencimiento = fecha_vencimiento_vacuna()
+    nuevo_clinica_id = id_clinica()
+    cursor.execute("""
+        UPDATE vacunas
+        SET lote = ?, tipo = ?, cantidad = ?, temperatura_minima = ?, temperatura_maxima = ?, fecha_vencimiento = ?, clinica_id = ?
+        WHERE id = ?;
+    """, (nuevo_lote, nuevo_tipo, nuevo_cantidad, nuevo_temperatura_minima, nuevo_temperatura_maxima, nuevo_fecha_vencimiento, nuevo_clinica_id, vacuna_id))
+    conn.commit()
+    print(f"Vacuna con ID {vacuna_id} modificada.") 
+def modificar_datos_ruta():
+    ruta_id = int(input("Ingrese el ID de la ruta a modificar: "))
+    nuevo_clinica_id = id_clinica()
+    nuevo_comunidad = rutas()
+    nuevo_fecha = fecha_ruta()
+    nuevo_distancia_km = distancia_km_ruta()
+    cursor.execute("""
+        UPDATE rutas
+        SET clinica_id = ?, comunidad = ?, fecha = ?, distancia_km = ?
+        WHERE id = ?;
+    """, (nuevo_clinica_id, nuevo_comunidad, nuevo_fecha, nuevo_distancia_km, ruta_id))
+    conn.commit()
+    print(f"Ruta con ID {ruta_id} modificada.")
+def modificar_datos_registro_temperatura():
+    registro_id = int(input("Ingrese el ID del registro de temperatura a modificar: "))
+    nuevo_clinica_id = id_clinica()
+    nuevo_equipo_id = id_equipo()
+    nuevo_temperatura = registros_temperatura()
+    nuevo_latitud = latitud_registro()
+    nuevo_longitud = longitud_registro()
+    nuevo_fuente = fuente_registro()
+    cursor.execute("""
+        UPDATE registros_temperatura
+        SET clinica_id = ?, equipo_id = ?, temperatura = ?, latitud = ?, longitud = ?, fuente = ?
+        WHERE id = ?;
+    """, (nuevo_clinica_id, nuevo_equipo_id, nuevo_temperatura, nuevo_latitud, nuevo_longitud, nuevo_fuente, registro_id))
+    conn.commit()
+    print(f"Registro de temperatura con ID {registro_id} modificado.")  
+def modificar_datos_aplicacion_vacuna():
+    aplicacion_id = int(input("Ingrese el ID de la aplicacion de vacuna a modificar: "))
+    nuevo_clinica_id = id_clinica()
+    nuevo_vacuna_id = id_vacuna()
+    nuevo_lote = aplicaciones_vacuna_lote()
+    nuevo_cantidad = aplicaciones_vacuna_cantidad()
+    nuevo_comunidad = id_comunidad_responsable()
+    nuevo_paciente_identificacion = aplicaciones_vacuna_paciente_identificacion()
+    nuevo_responsable_id = id_comunidad_responsable()
+    nuevo_evidencia_firma = aplicaciones_vacuna_evidencia_firma()
+    cursor.execute("""
+        UPDATE aplicaciones_vacuna
+        SET clinica_id = ?, vacuna_id = ?, lote = ?, cantidad = ?, comunidad = ?, paciente_identificacion = ?, responsable_id = ?, evidencia_firma = ?
+        WHERE id = ?;
+    """, (nuevo_clinica_id, nuevo_vacuna_id, nuevo_lote, nuevo_cantidad, nuevo_comunidad, nuevo_paciente_identificacion, nuevo_responsable_id, nuevo_evidencia_firma, aplicacion_id))
+    conn.commit()
+    print(f"Aplicacion de vacuna con ID {aplicacion_id} modificada.")   
+def modificar_datos_alerta():
+    alerta_id = int(input("Ingrese el ID de la alerta a modificar: "))
+    nuevo_tipo = tipo_alerta()
+    nuevo_mensaje = mensaje_alerta()
+    nuevo_clinica_id = id_clinica()
+    nuevo_equipo_id = id_equipo()
+    nuevo_vacuna_id = id_vacuna()
+    nuevo_severidad = severidad_alerta()
+    cursor.execute("""
+        UPDATE alertas
+        SET tipo = ?, mensaje = ?, clinica_id = ?, equipo_id = ?, vacuna_id = ?, severidad = ?
+        WHERE id = ?;
+    """, (nuevo_tipo, nuevo_mensaje, nuevo_clinica_id, nuevo_equipo_id, nuevo_vacuna_id, nuevo_severidad, alerta_id))
+    conn.commit()
+    print(f"Alerta con ID {alerta_id} modificada.") 
+def modificar_datos_mantenimiento():
+    mantenimiento_id = int(input("Ingrese el ID del mantenimiento a modificar: "))
+    nuevo_equipo_id = id_equipo()
+    nuevo_tipo_mantenimiento = mantenimiento_tipo()
+    nuevo_descripcion = descripcion_mantenimiento()
+    nuevo_fecha_programada = fecha_programada_mantenimiento()
+    nuevo_encargado_id = id_encargado()
+    cursor.execute("""
+        UPDATE mantenimientos
+        SET equipo_id = ?, tipo_mantenimiento = ?, descripcion = ?, fecha_programada = ?, encargado_id = ?
+        WHERE id = ?;
+    """, (nuevo_equipo_id, nuevo_tipo_mantenimiento, nuevo_descripcion, nuevo_fecha_programada, nuevo_encargado_id, mantenimiento_id))
+    conn.commit()
+    print(f"Mantenimiento con ID {mantenimiento_id} modificado.")
 
