@@ -134,6 +134,7 @@ def crear_tablas():
     CREATE TABLE IF NOT EXISTS auditoria (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         tabla_afectada TEXT NOT NULL,
+        registro_id INTEGER,
         accion TEXT NOT NULL,
         usuario_id INTEGER,
         valores_anteriores TEXT,
@@ -219,12 +220,12 @@ def insertar_datos_mantenimiento(equipo_id, tipo_mantenimiento, descripcion, fec
     cursor.execute(query, (equipo_id, tipo_mantenimiento, descripcion, fecha_programada, encargado_id))
     conn.commit()
     return cursor.lastrowid 
-def insertar_datos_auditoria(tabla_afectada, accion, usuario_id, valores_anteriores, valores_nuevos):    
+def insertar_datos_auditoria(tabla_afectada, registro_id, accion, usuario_id, valores_anteriores, valores_nuevos):    
     query = """
-    INSERT INTO auditoria (tabla_afectada, accion, usuario_id, valores_anteriores, valores_nuevos)
-    VALUES (?, ?, ?, ?, ?);
+    INSERT INTO auditoria (tabla_afectada, registro_id, accion, usuario_id, valores_anteriores, valores_nuevos)
+    VALUES (?, ?, ?, ?, ?, ?);
     """
-    cursor.execute(query, (tabla_afectada, accion, usuario_id, valores_anteriores, valores_nuevos))
+    cursor.execute(query, (tabla_afectada, registro_id, accion, usuario_id, valores_anteriores, valores_nuevos))
     conn.commit()
     return cursor.lastrowid
 
@@ -428,6 +429,7 @@ def distancia_km_ruta():
            return distancia
       except ValueError:
         print("Por favor ingrese una distancia válida.")    
+
 def registrar_ruta():  
     clinica_id = id_clinica()
     comunidad = rutas()
@@ -503,7 +505,7 @@ def id_comunidad_responsable():
         id_responsable = int(input('Ingrese el ID del responsable de la aplicacion:'))
         if id_responsable <= 0:
           print("El ID debe ser un número positivo.") 
-        elif cursor.execute("SELECT * FROM USUARIOS WHERE ID = ?", (id_responsable,)).fetchone() is None:
+        elif cursor.execute("SELECT * FROM USUARIOS WHERE ID = ? AND LOWER(rol) = 'medico'", (id_responsable,)).fetchone() is None:
           print("No existe un usuario con ese ID. Por favor ingrese un ID válido.")
         else:
            return id_responsable
@@ -737,13 +739,13 @@ def modificar_datos_tablas():
 
 def registrar_auditoria():  
     tabla_afectada = tabla_afectada()
+    registro_id = int(input("Ingrese el ID del registro afectado: "))
     accion = accion_auditoria()
     usuario_id = usuario_id()
     valores_anteriores = input("Ingrese los valores anteriores (formato JSON o texto): ")
     valores_nuevos = modificar_datos_tablas()
-    auditoria_id = insertar_datos_auditoria(tabla_afectada, accion, usuario_id, valores_anteriores, valores_nuevos)
-    print(f"Auditoria registrada con ID: {auditoria_id}") 
-      
+    auditoria_id = insertar_datos_auditoria(tabla_afectada, registro_id, accion, usuario_id, valores_anteriores, valores_nuevos)
+    print(f"Auditoria registrada con ID: {auditoria_id}")   
 def eliminar_clinica():
     clinica_id = id_clinica()
     cursor.execute("DELETE FROM clinicas WHERE id = ?", (clinica_id,))
