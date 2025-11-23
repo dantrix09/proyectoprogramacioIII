@@ -18,7 +18,6 @@ class ControlTemperatura:
     def mostrar_interfaz_temperatura(self):
         self.limpiar_parent()
         
-        # Título
         frame_titulo = ctk.CTkFrame(self.parent)
         frame_titulo.pack(fill="x", padx=20, pady=10)
         
@@ -26,7 +25,6 @@ class ControlTemperatura:
                     text="CONTROL DE CADENA DE FRÍO - Monitoreo en Tiempo Real",
                     font=ctk.CTkFont(size=14, weight="bold")).pack(pady=10)
         
-        # BOTÓN REDONDO DE CHEQUEO RÁPIDO
         frame_chequeo = ctk.CTkFrame(self.parent)
         frame_chequeo.pack(fill="x", padx=20, pady=15)
         
@@ -43,20 +41,16 @@ class ControlTemperatura:
         )
         btn_chequeo.pack(pady=10)
         
-        # Botones de control
         frame_controles = ctk.CTkFrame(self.parent)
         frame_controles.pack(fill="x", padx=20, pady=10)
         
         ctk.CTkButton(frame_controles, text="Simular Lectura de Temperatura",
                      command=self.simular_lectura_temperatura).pack(side="left", padx=5)
         
-        ctk.CTkButton(frame_controles, text="Verificar Estado Actual",
-                     command=self.verificar_estado_actual).pack(side="left", padx=5)
         
         ctk.CTkButton(frame_controles, text="Revisar Alertas de Temperatura",
                      command=self.revisar_alertas_temperatura).pack(side="left", padx=5)
-        
-        # Frame para el historial
+    
         self.frame_estado = ctk.CTkFrame(self.parent)
         self.frame_estado.pack(fill="both", expand=True, padx=20, pady=10)
         
